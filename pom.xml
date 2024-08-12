@@ -36,6 +36,9 @@
         <pkg.package.phase>none</pkg.package.phase>
         <pkg.user>thingsboard</pkg.user>
         <pkg.implementationTitle>${project.name}</pkg.implementationTitle>
+        <pkg.name>thingsboard</pkg.name>
+        <pkg.mainClass>ThingsboardServerApplication</pkg.mainClass>
+        <pkg.type>jar</pkg.type>
         <pkg.unixLogFolder>/var/log/${pkg.name}</pkg.unixLogFolder>
         <pkg.installFolder>/usr/share/${pkg.name}</pkg.installFolder>
         <jakarta-annotation.version>3.0.0</jakarta-annotation.version>

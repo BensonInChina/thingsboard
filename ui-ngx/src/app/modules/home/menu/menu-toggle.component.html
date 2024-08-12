@@ -23,6 +23,11 @@
 </a>
 <ul id="docs-menu-{{section.name | nospace}}" class="tb-menu-toggle-list" [ngStyle]="{height: sectionHeight()}">
   <li *ngFor="let page of section.pages; trackBy: trackBySectionPages">
-    <tb-menu-link [section]="page"></tb-menu-link>
+    <ng-container *ngIf="page.type === 'toggle'; else linkTemplate">
+      <tb-menu-toggle [section]="page"></tb-menu-toggle>
+    </ng-container>
+    <ng-template #linkTemplate>
+      <tb-menu-link [section]="page"></tb-menu-link>
+    </ng-template>
   </li>
 </ul>

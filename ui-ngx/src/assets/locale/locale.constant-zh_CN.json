@@ -1439,7 +1439,7 @@
         "state": "状态",
         "any": "所有",
         "active": "活动",
-        "inactive": "非活动",
+        "inactive": "未激活",
         "public": "公开",
         "device-public": "设备公开",
         "select-device": "选择设备",
@@ -6265,5 +6265,13 @@
     },
     "language": {
         "language": "语言"
+    },
+    "visibility": {
+        "visibility": "可视化",
+        "configuration": {
+            "configuration": "组态",
+            "management": "组态管理",
+            "template": "模板"
+        }
     }
 }

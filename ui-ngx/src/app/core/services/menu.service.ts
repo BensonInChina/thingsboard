@@ -851,11 +851,43 @@ export class MenuService {
         icon: 'mdi:alert-outline'
       },
       {
-        id: 'dashboards',
-        name: 'dashboard.dashboards',
-        type: 'link',
-        path: '/dashboards',
-        icon: 'dashboards'
+        id: 'visibility',
+        name: 'visibility.visibility',
+        type: 'toggle',
+        path: '/',
+        icon: 'visibility',
+        pages: [
+          {
+            id: 'dashboards',
+            name: 'dashboard.dashboards',
+            type: 'link',
+            path: '/dashboards',
+            icon: 'dashboard'
+          },
+          {
+            id: 'configuration',
+            name: 'visibility.configuration.management',
+            type: 'toggle',
+            path: '/visibility/management',
+            icon: 'badge',
+            pages: [
+              {
+                id: 'configs',
+                name: 'visibility.configuration.configuration',
+                type: 'link',
+                path: '/visibility/management/configuration',
+                icon: 'build'
+              },
+              {
+                id: 'template',
+                name: 'visibility.configuration.template',
+                type: 'link',
+                path: '/visibility/management/template',
+                icon: 'description'
+              }
+            ]
+          }
+        ]
       },
       {
         id: 'entities',

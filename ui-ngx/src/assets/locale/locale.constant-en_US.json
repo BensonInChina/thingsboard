@@ -7774,5 +7774,13 @@
             "zh_CN": "简体中文",
             "zh_TW": "繁體中文"
         }
+    },
+    "visibility": {
+        "visibility": "Visibility",
+        "configuration": {
+            "configuration": "Configuration",
+            "management": "Configuration Management",
+            "template": "Template"
+        }
     }
 }
