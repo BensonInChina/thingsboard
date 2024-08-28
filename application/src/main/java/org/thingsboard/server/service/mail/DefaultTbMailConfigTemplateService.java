@@ -17,11 +17,14 @@ package org.thingsboard.server.service.mail;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.thingsboard.common.util.JacksonUtil;
 
 import jakarta.annotation.PostConstruct;
+
+import java.io.File;
 import java.io.IOException;
 
 @Service
@@ -32,7 +35,11 @@ public class DefaultTbMailConfigTemplateService implements TbMailConfigTemplateS
 
     @PostConstruct
     private void postConstruct() throws IOException {
-        mailConfigTemplates = JacksonUtil.toJsonNode(new ClassPathResource("/templates/mail_config_templates.json").getFile());
+//        mailConfigTemplates = JacksonUtil.toJsonNode(new ClassPathResource("/templates/mail_config_templates.json").getFile());
+        ClassPathResource classPathResource = new ClassPathResource("/templates/mail_config_templates.json");
+        File temp = new File("temp.json");
+        FileUtils.copyToFile(classPathResource.getInputStream(), temp);
+        mailConfigTemplates = JacksonUtil.toJsonNode(temp);
     }
 
     @Override

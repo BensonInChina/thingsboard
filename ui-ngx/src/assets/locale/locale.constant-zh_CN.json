@@ -1471,6 +1471,9 @@
             "snmp-command": "使用以下文档通过 SNMP 连接设备。",
             "sparkplug-command": "使用以下文档通过 MQTT Sparkplug 连接设备。",
             "lwm2m-command": "使用以下文档通过 LWM2M 连接设备。"
+        },
+        "ethernet": {
+            "settings": "端口配置"
         }
     },
     "asset-profile": {
@@ -1921,6 +1924,23 @@
             "timeout-ms-required": "超时必填。",
             "user-name": "用户名",
             "user-name-required": "用户名必填。"
+        },
+        "config-items": {
+            "header": "系统设置",
+            "default": "以太网设置",
+            "wifi": "Wifi设置",
+            "net-port": "端口映射",
+            "serial": "串口设置",
+            "register": "注册设备",
+            "system-information": "系统信息",
+            "items": {
+                "nic": "网卡",
+                "IP-address": "IP地址",
+                "default-gateway": "默认网关",
+                "subnet-mask": "子网掩码",
+                "MAC-address": "MAC地址",
+                "DNS": "DNS"
+            }
         }
     },
     "dialog": {

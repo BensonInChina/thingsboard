@@ -1,0 +1,121 @@
+<!--
+
+    Copyright © 2016-2024 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<mat-toolbar color="primary">
+  <h2 translate>{{ dialogTitle }}</h2>
+  <span fxFlex></span>
+  <!--  <div [tb-help]="'check-connectivity'"></div>-->
+  <button mat-icon-button
+          (click)="close()"
+          type="button">
+    <mat-icon class="material-icons">close</mat-icon>
+  </button>
+</mat-toolbar>
+<div mat-dialog-content>
+  <section *ngIf="loadedCommand; else loadingCommand" class="tb-form-panel no-padding" fxLayout="row" fxLayoutAlign="start stretch" fxFlexFill>
+    <div fxFlex="20" fxFlex.gt-sm="20">
+      <header class="tb-nav-header">
+        <mat-toolbar color="primary" class="tb-nav-header-toolbar">
+          <div fxFlex="auto" fxLayout="row">
+            <mat-icon aria-label="settings-icon">settings</mat-icon>
+            <span> {{ "device-profile.config-items.header" | translate}} </span>
+          </div>
+        </mat-toolbar>
+      </header>
+      <mat-nav-list>
+        <mat-list-item *ngFor="let type of configItems"
+                       [ngClass]="{'active-menu-item' : selectedEthernetType === type, 'inactive-menu-item' : selectedEthernetType !== type}"
+                       (click)="selectEthernetType(type)">
+          <span> {{ deviceEthernetTypeTranslateMap. get(type) | translate}} </span>
+        </mat-list-item>
+      </mat-nav-list>
+    </div>
+    <div fxFlex="80" fxFlex.gt-sm="80" class="tb-form-panel no-padding no-border">
+      <ng-container *ngIf="selectedEthernetType === DeviceEthernetType.DEFAULT">
+        <div fxFlex="60%" fxLayoutAlign="center center" fxLayoutGap="10px">
+          <div>1</div>
+          <div>2</div>
+        </div>
+        <div fxLayoutAlign="center center" fxLayoutGap="10px">
+          <button mat-raised-button color="primary" (click)="refresh()">刷新</button>
+          <button mat-raised-button color="accent" (click)="save()">保存</button>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="selectedEthernetType === DeviceEthernetType.WIFI">WIFI设置</ng-container>
+      <ng-container *ngIf="selectedEthernetType === DeviceEthernetType.SERIAL">串口设置</ng-container>
+      <ng-container *ngIf="selectedEthernetType === DeviceEthernetType.NET_PORT">端口映射</ng-container>
+      <ng-container *ngIf="selectedEthernetType === DeviceEthernetType.REGISTER">注册设备</ng-container>
+      <ng-container *ngIf="selectedEthernetType === DeviceEthernetType.SYS_INFO">系统信息</ng-container>
+    </div>
+  </section>
+</div>
+
+<ng-template #loadingCommand>
+  <div class="tb-loader">
+    <mat-spinner color="accent" diameter="65" strokeWidth="4"></mat-spinner>
+    <span class="mat-subtitle-1 label">
+        {{ 'device.connectivity.loading-check-connectivity-command' | translate }}
+      </span>
+  </div>
+</ng-template>
+<ng-template #noData>
+  <div class="tb-no-data-available">
+    <div class="tb-no-data-bg"></div>
+    <div class="tb-no-data-text" translate>attribute.no-latest-telemetry</div>
+  </div>
+</ng-template>
+
+<ng-template #executeCommand let-cmd="cmd">
+  <div class="tb-form-panel stroked">
+    <div fxLayout="row" fxLayoutAlign="space-between center" [fxHide]="!(cmd.noSec || cmd.sec !== 'Check documentation')">
+      <div class="tb-form-panel-title" translate>device.connectivity.execute-following-command</div>
+      <tb-toggle-header #protocolType value="{{ cmd.noSec ? 'noSec' : 'sec'}}" name="protocolType" useSelectOnMdLg="false"
+                        [fxShow]="cmd.noSec && cmd.sec">
+        <tb-toggle-option value="noSec">{{ cmd.noSecLabel }}</tb-toggle-option>
+        <tb-toggle-option value="sec">{{ cmd.secLabel }}</tb-toggle-option>
+      </tb-toggle-header>
+    </div>
+    <ng-container [ngSwitch]="protocolType.value">
+      <ng-template [ngSwitchCase]="'noSec'">
+        <tb-markdown usePlainMarkdown containerClass="tb-command-code"
+                     [data]=createMarkDownCommand(cmd.noSec)></tb-markdown>
+      </ng-template>
+      <ng-template [ngSwitchCase]="'sec'">
+        <div *ngIf="cmd.sec !== 'Check documentation'; else checkDocumentation">
+          <tb-markdown usePlainMarkdown containerClass="tb-command-code"
+                       [data]=createMarkDownCommand(cmd.sec)></tb-markdown>
+        </div>
+        <ng-template #checkDocumentation>
+          <ng-container
+            *ngTemplateOutlet="seeDocumentation; context:
+                {doc: cmd.doc}">
+          </ng-container>
+        </ng-template>
+      </ng-template>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #seeDocumentation let-doc="doc">
+  <div class="tb-form-row no-border no-padding space-between">
+    <div class="tb-font-14 tb-flex-1">{{ doc.text | translate }}</div>
+    <a mat-stroked-button color="primary" href="{{doc.href }}" target="_blank">
+      <mat-icon>description</mat-icon>
+      {{ 'common.documentation' | translate }}
+    </a>
+  </div>
+</ng-template>

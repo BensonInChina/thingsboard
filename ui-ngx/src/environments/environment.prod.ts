@@ -15,7 +15,7 @@
 ///
 
 export const environment = {
-  appTitle: 'ThingsBoard',
+  appTitle: '盖利克物联网平台',
   production: true,
 // @ts-ignore
   tbVersion: TB_VERSION,

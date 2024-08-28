@@ -1538,6 +1538,9 @@
             "snmp-command": "Use the following documentation to connect the device through the SNMP.",
             "sparkplug-command": "Use the following documentation to connect the device through the MQTT Sparkplug.",
             "lwm2m-command": "Use the following documentation to connect the device through the LWM2M."
+        },
+        "ethernet": {
+            "settings": "Set Ethernet"
         }
     },
     "asset-profile": {
@@ -1994,6 +1997,23 @@
             "timeout-ms-required": "Timeout is required.",
             "user-name": "User name",
             "user-name-required": "User name is required."
+        },
+        "config-items": {
+            "header": "System Settings",
+            "default": "Ethernet Setting",
+            "wifi": "Wifi Setting",
+            "net-port": "Port Mapping",
+            "serial": "Serial Port Settings",
+            "register": "Register Device",
+            "system-information": "System Information",
+            "items": {
+                "nic": "Nic",
+                "IP-address": "IP Address",
+                "default-gateway": "Default Gateway",
+                "subnet-mask": "Subnet mask",
+                "MAC-address": "MAC Address",
+                "DNS": "DNS"
+            }
         }
     },
     "dialog": {
