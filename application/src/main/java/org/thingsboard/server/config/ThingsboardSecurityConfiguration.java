@@ -82,6 +82,8 @@ public class ThingsboardSecurityConfiguration {
     public static final String MAIL_OAUTH2_PROCESSING_ENTRY_POINT = "/api/admin/mail/oauth2/code";
     public static final String DEVICE_CONNECTIVITY_CERTIFICATE_DOWNLOAD_ENTRY_POINT = "/api/device-connectivity/mqtts/certificate/download";
     public static final String MY_REGISTER_POINT = "/api/doRegister/**";
+    public static final String APPLY_SN_WITHOUT_AUTH = "/api/device/applySN";
+    public static final String DEVICE_DETACH = "/api/device/detach/**";
 
     @Autowired
     private ThingsboardErrorResponseHandler restAccessDeniedHandler;
@@ -154,7 +156,7 @@ public class ThingsboardSecurityConfiguration {
         List<String> pathsToSkip = new ArrayList<>(Arrays.asList(NON_TOKEN_BASED_AUTH_ENTRY_POINTS));
         pathsToSkip.addAll(Arrays.asList(WS_ENTRY_POINT, TOKEN_REFRESH_ENTRY_POINT, FORM_BASED_LOGIN_ENTRY_POINT,
                 PUBLIC_LOGIN_ENTRY_POINT, DEVICE_API_ENTRY_POINT, MAIL_OAUTH2_PROCESSING_ENTRY_POINT,
-                DEVICE_CONNECTIVITY_CERTIFICATE_DOWNLOAD_ENTRY_POINT, MY_REGISTER_POINT));
+                DEVICE_CONNECTIVITY_CERTIFICATE_DOWNLOAD_ENTRY_POINT, MY_REGISTER_POINT, APPLY_SN_WITHOUT_AUTH, DEVICE_DETACH));
         SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, TOKEN_BASED_AUTH_ENTRY_POINT);
         JwtTokenAuthenticationProcessingFilter filter
                 = new JwtTokenAuthenticationProcessingFilter(failureHandler, jwtHeaderTokenExtractor, matcher);
@@ -218,7 +220,9 @@ public class ThingsboardSecurityConfiguration {
                                 TOKEN_REFRESH_ENTRY_POINT, // Token refresh end-point
                                 MAIL_OAUTH2_PROCESSING_ENTRY_POINT, // Mail oauth2 code processing url
                                 DEVICE_CONNECTIVITY_CERTIFICATE_DOWNLOAD_ENTRY_POINT, // Device connectivity certificate (public)
-                                MY_REGISTER_POINT, //自定义注册入口
+                                MY_REGISTER_POINT, // 自定义注册入口
+                                APPLY_SN_WITHOUT_AUTH, // 无权限认证申请序列号
+                                DEVICE_DETACH, // 无权限解绑设备
                                 WS_ENTRY_POINT).permitAll() // Protected WebSocket API End-points
                         .requestMatchers(TOKEN_BASED_AUTH_ENTRY_POINT).authenticated() // Protected API End-points
                         .anyRequest().permitAll())
