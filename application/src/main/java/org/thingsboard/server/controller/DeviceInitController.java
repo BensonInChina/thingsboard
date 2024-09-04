@@ -1,12 +1,12 @@
 /**
  * Copyright © 2016-2024 The Thingsboard Authors
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,11 +29,6 @@ import org.thingsboard.server.queue.util.TbCoreComponent;
 
 import java.util.Objects;
 
-/**
- * @Description: 为服务器提供初始化设备的接口
- * @Author: 许鑫
- * @Date: 2024/9/2
- */
 @RestController
 @TbCoreComponent
 @RequiredArgsConstructor
@@ -44,6 +39,7 @@ public class DeviceInitController {
     public static final String REGISTERED = "registered";
     public static final String SUCCESS = "success";
     public static final String SN_NOT_EXIST = "sn_not_exist";
+    public static final String API_URL = "http://localhost:8090/api";
 
 
     /**
@@ -56,8 +52,8 @@ public class DeviceInitController {
     @ResponseBody
     public String registerDevice(@RequestBody DeviceInit deviceInit, @RequestHeader("X-Authorization") String header) {
         String findResult = findDevice(deviceInit.sn);
-        if (findResult.equals(FAIL)) {
-            return FAIL;
+        if (findResult.equals(SN_NOT_EXIST)) {
+            return SN_NOT_EXIST;
         } else if (findResult.equals(REGISTERED)) {
             return REGISTERED;
         }
@@ -87,27 +83,32 @@ public class DeviceInitController {
     }
 
     /**
-    * @Description: 申请设备序列号接口
-    * @Param：无
-    * */
+     * @Description: 申请设备序列号接口
+     * @Param：无
+     * */
     @RequestMapping(value = "/device/applySN", method = RequestMethod.GET)
     @ResponseBody
     public String applySN() {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String url = "http://localhost:8090/api/device/applySN";
+        String url = API_URL + "/device/applySN";
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         System.out.println(response.getBody());
         return response.toString();
     }
 
+    /**
+     * @Description: 解绑设备
+     * @Param:
+        * deviceId: String 设备Id
+     *  */
     @RequestMapping(value = "/device/detach", method = RequestMethod.POST)
     @ResponseBody
     public String detachDevice(@RequestBody String deviceId) {
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8090/api/device/detach";
+        String url = API_URL + "/device/detach";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         JSONObject jsonObject = new JSONObject();
@@ -117,10 +118,25 @@ public class DeviceInitController {
         return response.getBody();
     }
 
+    @RequestMapping(value = "/device/getIp", method = RequestMethod.POST)
+    @ResponseBody
+    public String getIp(@RequestBody DeviceInit deviceInit) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String url = API_URL + "/device/getIp";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("deviceId", deviceInit.deviceId);
+        jsonObject.put("tenantId", deviceInit.tenantId);
+        HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+        return response.getBody();
+    }
+
     private String findDevice(String sn) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        String url = "http://localhost:8090/api/device/findDevice/" + sn;
+        String url = API_URL + "/device/findDevice/" + sn;
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
@@ -140,7 +156,7 @@ public class DeviceInitController {
     }
 
     private ResponseEntity<String> registerInServer(DeviceInit deviceInit) {
-        String url = "http://localhost:8090/api/device/register";
+        String url = API_URL + "/device/register";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
