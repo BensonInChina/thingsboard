@@ -126,7 +126,7 @@ public class DeviceInitController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         String url = API_URL + "/device/getIp";
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("deviceId", deviceInit.deviceId);
+        jsonObject.put("sn", deviceInit.sn);
         jsonObject.put("tenantId", deviceInit.tenantId);
         HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
         ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);

@@ -38,9 +38,10 @@ import org.thingsboard.server.queue.util.TbCoreComponent;
 public class myRegister {
     private static final String userName = "sysadmin@thingsboard.org";
     private static final String password = "sysadmin";
-    public static final String tenantId = "9c2cb420-5c4c-11ef-a1a6-45161ad73007";
     private static String token = "default";
     public static String refreshToken = "default";
+    public static final String SERVER_URL = "http://localhost:8080";
+    private static String tenantId;
 
     @RequestMapping(value = "/doRegister/do", method = RequestMethod.POST)
     @ResponseBody
@@ -52,7 +53,14 @@ public class myRegister {
             token = rootNode.get("token").asText();
             refreshToken = rootNode.get("refreshToken").asText();
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+        }
+        String replyStr = createEnterprise(registerData);
+        try {
+            JsonNode reply = objectMapper.readTree(replyStr);
+            tenantId = reply.get("id").get("id").asText();
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
         }
         String result = postForRegister(registerData);
         System.out.println(result);
@@ -65,7 +73,7 @@ public class myRegister {
     }
 
     private String activate(RegisterData registerData, String activateToken) {
-        String url = "http://cloud.guericke.cn/api/noauth/activate?sendActivationMail=false";
+        String url = SERVER_URL + "/api/noauth/activate?sendActivationMail=false";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -87,7 +95,7 @@ public class myRegister {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        String url = "http://cloud.guericke.cn/api/user/" + id + "/activationLink";
+        String url = SERVER_URL + "/api/user/" + id + "/activationLink";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -103,7 +111,7 @@ public class myRegister {
 
     private String loginAsSysAdmin() {
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://cloud.guericke.cn/api/auth/login";
+        String url = SERVER_URL + "/api/auth/login";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         JSONObject json = new JSONObject();
@@ -114,9 +122,22 @@ public class myRegister {
         return exchange.getBody();
     }
 
+    private String createEnterprise(RegisterData registerData) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = SERVER_URL + "/api/tenant";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("X-Authorization", "Bearer " + token);
+        JSONObject json = new JSONObject();
+        json.put("title", registerData.getEnterprise());
+        HttpEntity<String> request = new HttpEntity<>(json.toString(), headers);
+        ResponseEntity<String> exchange = restTemplate.postForEntity(url, request, String.class);
+        return exchange.getBody();
+    }
+
     private String postForRegister(RegisterData registerData) {
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://cloud.guericke.cn/api/user?sendActivationMail=false";
+        String url = SERVER_URL + "/api/user?sendActivationMail=false";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("X-Authorization", "Bearer " + token);
@@ -144,6 +165,7 @@ public class myRegister {
     @Setter
     @Getter
     public static class RegisterData {
+        private String enterprise;
         private String username;
         private String password;
         private String name;
