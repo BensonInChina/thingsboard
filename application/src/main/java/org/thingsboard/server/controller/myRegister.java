@@ -43,6 +43,37 @@ public class myRegister {
     public static final String SERVER_URL = "http://localhost:8080";
     private static String tenantId;
 
+    @RequestMapping(value = "/doRegister/getVerificationCode", method = RequestMethod.POST)
+    @ResponseBody
+    public String getVerificationCode(@RequestBody String email) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://localhost:8090/api/register/getVerificationCode";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        JSONObject body = new JSONObject();
+        System.out.println(email);
+        body.put("email", email);
+        HttpEntity<String> entity = new HttpEntity<>(body.toString(), headers);
+        ResponseEntity<String> exchange = restTemplate.postForEntity(url, entity, String.class);
+        return exchange.getBody();
+    }
+
+    @RequestMapping(value = "/doRegister/verify", method = RequestMethod.POST)
+    @ResponseBody
+    public String verify(@RequestBody String json) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://localhost:8090/api/register/verify";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        JSONObject body = new JSONObject();
+        System.out.println(json);
+        body.put("json", json);
+        HttpEntity<String> entity = new HttpEntity<>(body.toString(), headers);
+        ResponseEntity<String> exchange = restTemplate.postForEntity(url, entity, String.class);
+        System.out.println(exchange.getBody());
+        return exchange.getBody();
+    }
+
     @RequestMapping(value = "/doRegister/do", method = RequestMethod.POST)
     @ResponseBody
     public String doRegister(@RequestBody RegisterData registerData) {
