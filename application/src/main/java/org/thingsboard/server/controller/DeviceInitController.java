@@ -1,12 +1,12 @@
 /**
  * Copyright © 2016-2024 The Thingsboard Authors
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ import org.thingsboard.server.queue.util.TbCoreComponent;
 
 import java.util.Objects;
 
+@Slf4j
 @RestController
 @TbCoreComponent
 @RequiredArgsConstructor
@@ -45,8 +47,8 @@ public class DeviceInitController {
     /**
      * @Description: 注册设备入口
      * @Param:
-        * deviceInit: 注册的设备属性
-        * header: 用于关联账户设备权限
+     * deviceInit: 注册的设备属性
+     * header: 用于关联账户设备权限
      * */
     @RequestMapping(value = "/device/register", method = RequestMethod.POST)
     @ResponseBody
@@ -102,7 +104,7 @@ public class DeviceInitController {
     /**
      * @Description: 解绑设备
      * @Param:
-        * deviceId: String 设备Id
+     * deviceId: String 设备Id
      *  */
     @RequestMapping(value = "/device/detach", method = RequestMethod.POST)
     @ResponseBody
@@ -131,6 +133,46 @@ public class DeviceInitController {
         HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
         ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
         return response.getBody();
+    }
+
+    @RequestMapping(value = "/device/getMyDevice", method = RequestMethod.POST)
+    @ResponseBody
+    public String getMyDevice(@RequestBody String body) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String url = API_URL + "/device/getMyDevice";
+        ObjectMapper objectMapper = new ObjectMapper();
+        String tenantId = null;
+        try {
+            JsonNode bodyNode = objectMapper.readTree(body);
+            tenantId = bodyNode.get("tenantId").asText();
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("tenantId", tenantId);
+        HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+        return response.getBody();
+    }
+
+    @RequestMapping(value = "/device/delete/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public String delete(@PathVariable("id") String id, @RequestHeader("X-Authorization") String header) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String url = API_URL + "/device/findDeviceId/" + id;
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        String deviceId = response.getBody();
+        if (deviceId == null) return FAIL;
+        headers.set("X-Authorization", header);
+        url = "http://localhost:8080/api/device/" + deviceId;
+        response = restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class);
+        System.out.println(response.getBody());
+        return SUCCESS;
     }
 
     private String findDevice(String sn) {
