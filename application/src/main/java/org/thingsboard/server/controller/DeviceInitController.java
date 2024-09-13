@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@ package org.thingsboard.server.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -191,9 +192,13 @@ public class DeviceInitController {
         String url = "http://localhost:8080/api/device";
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("X-Authorization", header);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name", deviceInit.deviceName);
-        HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode additionalInfoNode = objectMapper.createObjectNode();
+        additionalInfoNode.put("description", deviceInit.note);
+        ObjectNode rootNode = objectMapper.createObjectNode();
+        rootNode.put("name", deviceInit.deviceName);
+        rootNode.set("additionalInfo", additionalInfoNode);
+        HttpEntity<String> entity = new HttpEntity<>(rootNode.toString(), headers);
         return restTemplate.postForEntity(url, entity, String.class);
     }
 
@@ -207,6 +212,7 @@ public class DeviceInitController {
         jsonObject.put("deviceName", deviceInit.deviceName);
         jsonObject.put("deviceId", deviceInit.deviceId);
         jsonObject.put("tenantId", deviceInit.tenantId);
+        jsonObject.put("note", deviceInit.note);
         HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
         return restTemplate.postForEntity(url, entity, String.class);
     }
@@ -218,5 +224,6 @@ public class DeviceInitController {
         private String deviceName;
         private String deviceId;
         private String tenantId;
+        private String note;
     }
 }
