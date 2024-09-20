@@ -41,7 +41,7 @@ public class DeviceInitController {
     public static final String FAIL = "fail";
     public static final String REGISTERED = "registered";
     public static final String SUCCESS = "success";
-    public static final String SN_NOT_EXIST = "sn_not_exist";
+    public static final String SN_NOT_EXIST = "SN not exist";
     public static final String API_URL = "http://localhost:8090/api";
 
 
