@@ -52,25 +52,6 @@ export enum DeviceTransportType {
   SNMP = 'SNMP'
 }
 
-//设备端口配置项
-export enum DeviceEthernetType {
-  DEFAULT = 'DEFAULT',
-  WIFI = 'WIFI',
-  SERIAL = 'SERIAL',
-  NET_PORT = 'NET_PORT',
-  REGISTER = 'REGISTER',
-  SYS_INFO = 'SYS_INFO'
-}
-
-export enum DeviceEthernetItems {
-  NIC = "NIC",
-  IP_ADDRESS = "IP_ADDRESS",
-  "DEFAULT_GATEWAY" = "DEFAULT_GATEWAY",
-  "SUBNET_MASK" = "SUBNET_MASK",
-  "MAC_ADDRESS" = "MAC_ADDRESS",
-  "DNS" = "DNS"
-}
-
 export enum BasicTransportType {
   HTTP = 'HTTP'
 }
@@ -142,28 +123,6 @@ export const deviceProvisionTypeTranslationMap = new Map<DeviceProvisionType, st
     [DeviceProvisionType.ALLOW_CREATE_NEW_DEVICES, 'device-profile.provision-strategy-created-new'],
     [DeviceProvisionType.CHECK_PRE_PROVISIONED_DEVICES, 'device-profile.provision-strategy-check-pre-provisioned'],
     [DeviceProvisionType.X509_CERTIFICATE_CHAIN, 'device-profile.provision-strategy-x509.certificate-chain']
-  ]
-);
-
-export const deviceEthernetTypeTranslateMap = new Map<DeviceEthernetType, string>(
-  [
-    [DeviceEthernetType.DEFAULT, 'device-profile.config-items.default'],
-    [DeviceEthernetType.WIFI, 'device-profile.config-items.wifi'],
-    [DeviceEthernetType.NET_PORT, 'device-profile.config-items.net-port'],
-    [DeviceEthernetType.SERIAL, 'device-profile.config-items.serial'],
-    [DeviceEthernetType.REGISTER, 'device-profile.config-items.register'],
-    [DeviceEthernetType.SYS_INFO, 'device-profile.config-items.system-information']
-  ]
-);
-
-export const deviceEthernetItemsTranslateMap = new Map<DeviceEthernetItems, string>(
-  [
-    [DeviceEthernetItems.NIC, 'device-profile.config-items.items.nic'],
-    [DeviceEthernetItems.IP_ADDRESS, 'device-profile.config-items.items.IP-address'],
-    [DeviceEthernetItems.DEFAULT_GATEWAY, 'device-profile.config-items.items.default-gateway'],
-    [DeviceEthernetItems.SUBNET_MASK, 'device-profile.config-items.items.subnet-mask'],
-    [DeviceEthernetItems.MAC_ADDRESS, 'device-profile.config-items.items.MAC-address'],
-    [DeviceEthernetItems.DNS, 'device-profile.config-items.items.DNS'],
   ]
 );
 
@@ -364,10 +323,10 @@ export interface SnmpMapping {
 }
 
 export type DeviceProfileTransportConfigurations = DefaultDeviceProfileTransportConfiguration &
-                                                   MqttDeviceProfileTransportConfiguration &
-                                                   CoapDeviceProfileTransportConfiguration &
-                                                   Lwm2mDeviceProfileTransportConfiguration &
-                                                   SnmpDeviceProfileTransportConfiguration;
+  MqttDeviceProfileTransportConfiguration &
+  CoapDeviceProfileTransportConfiguration &
+  Lwm2mDeviceProfileTransportConfiguration &
+  SnmpDeviceProfileTransportConfiguration;
 
 export interface DeviceProfileTransportConfiguration extends DeviceProfileTransportConfigurations {
   type: DeviceTransportType;

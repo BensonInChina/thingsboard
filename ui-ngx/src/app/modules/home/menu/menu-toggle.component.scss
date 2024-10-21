@@ -43,10 +43,5 @@
       text-transform: none !important;
       text-rendering: optimizeLegibility;
     }
-    .tb-menu-toggle-list {
-      a.mat-mdc-button {
-        padding-left: 48px; // 二级菜单项的缩进，相对于父菜单项缩进的16px
-      }
-    }
   }
 }

@@ -84,7 +84,6 @@ import {
   DeviceCheckConnectivityDialogData
 } from '@home/pages/device/device-check-connectivity-dialog.component';
 import { EntityId } from '@shared/models/id/entity-id';
-import {SetEthernetDialogComponent} from "@home/pages/device/set-ethernet-dialog/set-ethernet-dialog.component";
 
 interface DevicePageQueryParams extends PageQueryParam {
   deviceProfileId?: string;
@@ -125,11 +124,11 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
 
     this.config.loadEntity = id => this.deviceService.getDeviceInfo(id.id);
     this.config.saveEntity = device => this.deviceService.saveDevice(device).pipe(
-        tap(() => {
-          this.broadcast.broadcast('deviceSaved');
-        }),
-        mergeMap((savedDevice) => this.deviceService.getDeviceInfo(savedDevice.id.id)
-        ));
+      tap(() => {
+        this.broadcast.broadcast('deviceSaved');
+      }),
+      mergeMap((savedDevice) => this.deviceService.getDeviceInfo(savedDevice.id.id)
+      ));
     this.config.onEntityAction = action => this.onDeviceAction(action, this.config);
     this.config.detailsReadonly = () =>
       (this.config.componentsData.deviceScope === 'customer_user' || this.config.componentsData.deviceScope === 'edge_customer_user');
@@ -648,9 +647,6 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
       case 'checkConnectivity':
         this.checkConnectivity(action.event, action.entity.id);
         return true;
-      case 'setEthernet':
-        this.setEthernet(action.event, action.entity.id)
-        return true;
     }
     return false;
   }
@@ -730,37 +726,19 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
       $event.stopPropagation();
     }
     this.dialog.open<DeviceCheckConnectivityDialogComponent, DeviceCheckConnectivityDialogData>
-      (DeviceCheckConnectivityDialogComponent, {
-        disableClose: true,
-        panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
-        data: {
-          deviceId,
-          afterAdd
-        }
-      })
+    (DeviceCheckConnectivityDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        deviceId,
+        afterAdd
+      }
+    })
       .afterClosed()
       .subscribe(() => {
         if (afterAdd ) {
           this.config.updateData();
         }
-      });
-  }
-
-  private setEthernet($event: Event, deviceId: EntityId) {
-    if ($event) {
-      $event.stopPropagation();
-    }
-    this.dialog.open<SetEthernetDialogComponent, {deviceId: EntityId}>
-    (SetEthernetDialogComponent, {
-      disableClose: true,
-      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
-      data: {
-        deviceId
-      }
-    })
-      .afterClosed()
-      .subscribe(() => {
-        console.log("Set Ethernetdialog closed")
       });
   }
 }

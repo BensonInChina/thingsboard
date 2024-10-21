@@ -39,33 +39,16 @@ export class MenuToggleComponent implements OnInit {
   }
 
   sectionHeight(): string {
-    let height = 0;
-
-    // Add height for primary menu section if it's opened
     if (this.section.opened) {
-      height += this.section.pages.length * 40;
-
-      // Calculate height for secondary menus if any are opened
-      this.section.pages.forEach(page => {
-        if (page.opened) {
-          height += (page.pages?.length || 0) * 40;
-        }
-      });
+      return this.section.pages.length * 40 + 'px';
+    } else {
+      return '0px';
     }
-
-    return height + 'px';
   }
 
   toggleSection(event: MouseEvent) {
     event.stopPropagation();
     this.section.opened = !this.section.opened;
-    if (!this.section.opened) {
-      this.section.pages.forEach(page => {
-        if (page.type === 'toggle') {
-          page.opened = false;
-        }
-      });
-    }
     this.store.dispatch(new ActionPreferencesUpdateOpenedMenuSection({path: this.section.path, opened: this.section.opened}));
   }
 
