@@ -24,11 +24,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.thingsboard.server.queue.util.TbCoreComponent;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 @Slf4j
@@ -43,6 +46,7 @@ public class DeviceInitController {
     public static final String SUCCESS = "success";
     public static final String SN_NOT_EXIST = "SN not exist";
     public static final String API_URL = "http://localhost:8090/api";
+    public static final String ONE = "/device/applySN";
 
 
     /**
@@ -91,15 +95,30 @@ public class DeviceInitController {
      * */
     @RequestMapping(value = "/device/applySN", method = RequestMethod.GET)
     @ResponseBody
-    public String applySN() {
+    public String applySN(int number) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String url = API_URL + "/device/applySN";
+        String url = API_URL + (number == 0 ? ONE : ONE + "/" + number);
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         System.out.println(response.getBody());
-        return response.toString();
+        return response.getBody();
+    }
+
+    @RequestMapping(value = "/doRegister/test/applySN/{number}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<Resource> testApplySN(@PathVariable("number") String number) {
+        String str = applySN(Integer.parseInt(number));
+        String fileName = "test.txt";
+        Resource resource = new ByteArrayResource(str.getBytes(StandardCharsets.UTF_8));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+        headers.add(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
+        headers.add(HttpHeaders.PRAGMA, "no-cache");
+        headers.add(HttpHeaders.EXPIRES, "0");
+        return ResponseEntity.ok().headers(headers).
+                contentLength(str.getBytes(StandardCharsets.UTF_8).length).contentType(MediaType.APPLICATION_OCTET_STREAM).body(resource);
     }
 
     /**
