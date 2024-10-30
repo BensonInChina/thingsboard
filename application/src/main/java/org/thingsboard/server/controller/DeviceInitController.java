@@ -53,7 +53,7 @@ public class DeviceInitController {
 
     /**
      * @Description: 注册设备入口
-     * @Param:
+     * @params:
      * deviceInit: 注册的设备属性
      * header: 用于关联账户设备权限
      * */
@@ -93,7 +93,7 @@ public class DeviceInitController {
 
     /**
      * @Description: 申请设备序列号接口
-     * @Param：无
+     * @params: 无
      * */
     @RequestMapping(value = "/device/applySN", method = RequestMethod.GET)
     @ResponseBody
@@ -108,6 +108,14 @@ public class DeviceInitController {
         return response.getBody();
     }
 
+    /**
+     * 批量获取序列号
+     * @Author: 许鑫
+     * @Date:  2024/10/29 16:48
+     * @params:
+     * number 获取序列号的数量
+     * @return org.springframework.http.ResponseEntity<org.springframework.core.io.Resource>
+     **/
     @RequestMapping(value = "/doRegister/test/applySN/{number}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Resource> testApplySN(@PathVariable("number") String number) {
@@ -128,7 +136,7 @@ public class DeviceInitController {
 
     /**
      * @Description: 解绑设备
-     * @Param:
+     * @params:
      * deviceId: String 设备Id
      *  */
     @RequestMapping(value = "/device/detach", method = RequestMethod.POST)
